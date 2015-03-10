@@ -1,0 +1,99 @@
+﻿body { font-family: sans-serif; font-size: 14px; line-height: 1.6em; margin: 0; padding: 0; background: radial-gradient(circle, #6d8aa5, #303d49 );}
+body.screenSmall {background: radial-gradient(circle, #6d8aa5, #303d49 ); margin-top:30px;}
+
+.footer {
+	text-align:center;
+}
+
+/* Autocomplete dropdown styles */
+
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; cursor: default; overflow: auto; -webkit-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64); -moz-box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64); box-shadow: 1px 4px 3px rgba(50, 50, 50, 0.64); }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-no-suggestion { padding: 2px 5px;}
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: bold; color: #000; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { font-weight: bold; font-size: 16px; color: #000; display: block; border-bottom: 1px solid #000; }
+
+/* input.autocomplete { font-size: 28px; padding: 10px; border: 1px solid #CCC; display: block; margin: 20px 0; } */
+
+
+
+#eval_form_container .form-group {height:80px;}
+#eval_form_container  h1 {margin-top:5px;margin-bottom:5px;}
+#eval_form_container  .page-header{margin:0px;}
+#eval_form_container  .eval_form_section {
+	width:100%;
+	table-layout:fixed;
+	margin-bottom:20px;
+}
+#eval_form_container  .eval_form_section tbody{
+	
+}
+#eval_form_container  .eval_form_section .question {
+	width:15%;
+	text-align:right;
+	padding:10px 8px 10px 8px;
+	font-weight:800;
+}
+#eval_form_container  .eval_form_section .option {
+	width:15%;
+	text-align:center;
+	height:120px;
+	vertical-align:top;
+	padding:5px 5px 5px 5px;
+}
+#eval_form_container  .eval_form_section .ni {
+	width:5%;
+	text-align:center;
+	height:120px;
+	vertical-align:top;
+	padding:5px 5px 5px 5px;
+}
+#eval_form_container  .eval_form_section .comments {
+	width:10%;
+	text-align:center;
+	height:120px;
+	vertical-align:top;
+	padding:5px 5px 5px 5px;
+}
+#eval_form_container  .eval_form_section .option .val {
+	font-weight:bold;
+	font-size:15px;
+	border-bottom:2px solid black;
+	width:100%;
+	display:block;
+	height:28px;
+	padding:5px 0px 5px 0px;
+}
+#eval_form_container  .eval_form_section .selected {
+	
+	
+}
+
+#eval_form_container  #msg_before_form, #eval_form_container  #msg_after_form {
+	display:none;
+}
+
+/* Login styles */
+.loginbox {
+    margin-top:75px;
+}
+@media ( min-width:600px ) {
+    .loginbox {
+        margin-top:10px;
+    }
+}
+@media ( min-width:768px ) {
+    .loginbox {
+        margin-top:75px;
+    }
+}
+
+
+
+/* utility styles */
+.table-responsive
+{
+    overflow-x: auto;
+}
