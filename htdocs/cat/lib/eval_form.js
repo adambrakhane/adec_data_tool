@@ -1,4 +1,4 @@
-﻿$(function() {
+$(function() {
 	if ( $( "#eval_form" ).length ) {
 		var $form_data_on_page_load = {}; // We'll use this later to decide if we're going to submit any data or not
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once('./lib/template.php');
 require_once('./lib/mysql.php');
 require_once('./lib/db.php');
@@ -80,7 +80,8 @@ if($_GET['p']=='insert_community') {
 					<?php if($is_admin) { ?>
 						<?php $tpl->circuit_rider_dropdown($db); ?>
 					<?php } else { ?>
-						<input type="hidden" id="circuit_rider_id" name="circuit_rider_id" value="<?=$circuit_rider["id"];?>">
+						<input type="hidden" id="circuit_rider_id" name="circuit_rider_id" value="<?=$circuit_rider["id"];?>"><br>
+						<?=$circuit_rider['first_name'];?> <?=$circuit_rider['last_name'];?> (<?=$circuit_rider['email'];?> )
 					<?php } ?>
 				</div>
 				
@@ -290,13 +291,17 @@ else if($_GET['p']=='insert_cr') {
 				</div>
 				<div class="form-group">
 					<label for="password">Contraseña</label><br>
-					<input class="form-control" type="text" name="password" id="password"><br>
+					<input class="form-control" type="password" name="password" id="password"><br>
 				</div>
 			</div>
 			<div class="col-xs-6">
 				<div class="form-group">
 					<label for="role">Rol:</label><br>
 					<input type="text" class="form-control" name="role" id="role"><br>
+				</div>
+				<div class="form-group">
+					<label for="email">Dirección de Correo:</label><br>
+					<input type="text" class="form-control" name="email" id="email"><br>
 				</div>
 				
 			</div>
@@ -368,11 +373,19 @@ else if($_GET['p']=='profile') {
 					<label for="role">Rol:</label><br>
 					<input type="text" class="form-control" name="role" id="role" disabled="disabled" value="<?=$role;?>"><br>
 				</div>
+				<div class="form-group">
+					<label for="email">Dirección de Correo:</label><br>
+					<input type="text" class="form-control" name="email" id="email" value="<?=$circuit_rider['email'];?>"><br>
+				</div>
 			</div>
 			<div class="col-xs-6">
 				<div class="form-group">
 					<label for="password_old">Contraseña Anterior</label><br>
 					<input class="form-control" type="password" name="password_old" id="password_old"><br>
+					
+				</div>
+				<div class="form-group">
+					<div class="alert alert-warning validate" id="validate_status_old" style="display:none;"></div>
 				</div>
 				<div class="form-group">
 					<label for="password_new">Contraseña Nueva</label><br>
@@ -381,11 +394,12 @@ else if($_GET['p']=='profile') {
 				<div class="form-group">
 					<label for="password_new_2">Contraseña Nueva (Confirmar)</label><br>
 					<input class="form-control" type="password" name="password_new_2" id="password_new_2"><br>
-					<div class="alert alert-warning" id="validate_status" style="display:none;"></div>
+				</div>
+				<div class="form-group">
+					<div class="alert alert-warning validate" id="validate_status" style="display:none;"></div>
 				</div>
 				
 			</div>
-			<button type="submit" class="btn btn-success btn-block">Actualizar</button>
 		</div>
 	</form>
 	</div>
@@ -393,22 +407,38 @@ else if($_GET['p']=='profile') {
 	<script>
 		$(".close_btn").click(function() {window.location.href = "./";});
 		$(document).ready(function() {
+			$("#password_old").keyup(validate_old);
 			$("#password_new").keyup(validate);
 			$("#password_new_2").keyup(validate);
 		});
 		var form_ready = true;
+		function validate_old() {
+			if($("#password_old").val().length<=1) {
+				$('#update_cr button[type="submit"]').prop('disabled',true);
+				$("#validate_status_old").text("Usted debe dar su antigua contraseña para realizar cualquier cambio.").removeClass("alert-success").addClass("alert-warning").slideDown();
+				$("#validate_status_old").parent().slideDown();
+			}
+			else {
+				$('#update_cr button[type="submit"]').prop('disabled',false);
+				$("#validate_status_old").text("Listo!").removeClass("alert-warning").addClass("alert-success").delay(1000).slideUp();      
+				$("#validate_status_old").parent().slideUp();
+			}
+		}
 		function validate() {
 			var password1 = $("#password_new").val();
 			var password2 = $("#password_new_2").val();
 			if(password1 == password2) {
 				$("#validate_status").text("Listo!").removeClass("alert-warning").addClass("alert-success").delay(1000).slideUp();      
+				$("#validate_status").parent().slideUp();
 				form_ready = true;
 			}
 			else {
 				$("#validate_status").text("Las contraseñas deben coincidir.").removeClass("alert-success").addClass("alert-warning").slideDown();
+				$("#validate_status").parent().slideDown();
 				form_ready = false;
 			}
 		}
+		validate(); validate_old();
 		$("#update_cr").submit(function(e) {
 			if(!form_ready) e.preventDefault();
 		});
@@ -848,8 +878,8 @@ else if($_GET['p']=='update_gps') {
 				<table class="table table-bordered table-striped table-hover" id="gps_table">
 					<thead>
 						<th>Ubicacion</th>
-						<th>Latitud <span>(Ex: 44.16838)</span></th>
-						<th>Longitud <span>(Ex: 87.98188)</span></th>
+						<th>Latitud <span>(Ex: 14.16838)</span></th>
+						<th>Longitud <span>(Ex: -87.98188)</span></th>
 						<th>Elevación (m) <span>(Ex: 1524)</span></th>
 						<th>Comentario</th>
 						<th></th>
@@ -859,10 +889,10 @@ else if($_GET['p']=='update_gps') {
 $data_for_community = $db->listAllGPS($community_id,"community_gps","all","","location_name");
 foreach($data_for_community as $d) {
 	echo '<tr>';
-		echo '<td><input type="text" name="location_name[]" class="form-control" placeholder="Ubicacion" value="'.$d['location_name'].'" disabled=\"disabled\"></td>';
-		echo '<td><input type="text" name="gps_lat[]" class="form-control" placeholder="lat" value="'.$d['gps_lat'].'"></td>';
-		echo '<td><input type="text" name="gps_lon[]" class="form-control" placeholder="lon" value="'.$d['gps_lon'].'"></td>';
-		echo '<td><input type="text" name="gps_ele[]" class="form-control" placeholder="ele" value="'.$d['gps_ele'].'"></td>';
+		echo '<td><input type="text" name="location_name[]" class="form-control location_name" placeholder="Ubicacion" value="'.$d['location_name'].'" disabled=\"disabled\"></td>';
+		echo '<td><input type="text" name="gps_lat[]" class="form-control numeric_only" placeholder="lat" pattern="[-+]?[0-9]*[.,]?[0-9]+" value="'.$d['gps_lat'].'"></td>';
+		echo '<td><input type="text" name="gps_lon[]" class="form-control numeric_only" placeholder="lon" pattern="[-+]?[0-9]*[.,]?[0-9]+" value="'.$d['gps_lon'].'"></td>';
+		echo '<td><input type="text" name="gps_ele[]" class="form-control numeric_only" placeholder="ele" pattern="[-+]?[0-9]*[.,]?[0-9]+" value="'.$d['gps_ele'].'"></td>';
 		echo '<td><textarea name="comments[]" class="commentbox form-control">'.$d['comments'].'</textarea></td>';
 		echo '<td><button type="button" class="btn btn-danger deleterow">Borrar</button></td>';
 	echo '</tr>';
@@ -870,9 +900,9 @@ foreach($data_for_community as $d) {
 					?>
 						<tr>
 							<td><input type="text" name="location_name[]" class="form-control location_name" placeholder="Ubicacion"></td>
-							<td><input type="text" name="gps_lat[]" class="form-control numeric_only" placeholder="lat"></td>
-							<td><input type="text" name="gps_lon[]" class="form-control numeric_only" placeholder="lon"></td>
-							<td><input type="text" name="gps_ele[]" class="form-control numeric_only" placeholder="ele"></td>
+							<td><input type="text" name="gps_lat[]" class="form-control numeric_only" placeholder="lat" pattern="[-+]?[0-9]*[.,]?[0-9]+"></td>
+							<td><input type="text" name="gps_lon[]" class="form-control numeric_only" placeholder="lon" pattern="[-+]?[0-9]*[.,]?[0-9]+"></td>
+							<td><input type="text" name="gps_ele[]" class="form-control numeric_only" placeholder="ele" pattern="[-+]?[0-9]*[.,]?[0-9]+"></td>
 							<td><textarea name="comments[]" class="commentbox form-control"></textarea></td>
 							<td><button type="button" class="btn btn-danger deleterow">Borrar</button></td>
 						</tr>
@@ -885,26 +915,20 @@ foreach($data_for_community as $d) {
 </form>
 <?=$tpl->scriptIncludes();?>
 	<script>
-		$(".numeric_only").keydown(function (e) {
-			// Allow: backspace, delete, tab, escape, enter and .
-			if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-				 // Allow: Ctrl+A
-				(e.keyCode == 65 && e.ctrlKey === true) || 
-				 // Allow: home, end, left, right, down, up
-				(e.keyCode >= 35 && e.keyCode <= 40)) {
-					 // let it happen, don't do anything
-					 return;
-			}
-			// Ensure that it is a number and stop the keypress
-			if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-				e.preventDefault();
-			}
-		});
+		function attachNumericValidator() {
+			$('.numeric_only').keyup(function () {
+				if (this.value != this.value.replace(/[^0-9\.\-]/g, '')) {
+				   this.value = this.value.replace(/[^0-9\.\-]/g, '');
+				}
+			});
+		}
+		attachNumericValidator();
 		$(".close_btn").click(function() {window.location.href = "./";});
 		$("#new_row_btn").click(function() {
-			$("#gps_table").append('<tr><td><input type="text" name="location_name[]" class="form-control" placeholder="Ubicacion"></td><td><input type="text" name="gps_lat[]" class="form-control" placeholder="lat"></td><td><input type="text" name="gps_lon[]" class="form-control" placeholder="lon"></td><td><input type="text" name="gps_ele[]" class="form-control" placeholder="ele"></td><td><textarea name="comments[]" class="commentbox form-control"></textarea></td><td><button type="button" class="btn btn-danger deleterow">Borrar</button></td></tr>');
+			$("#gps_table").append('<tr><td><input type="text" name="location_name[]" class="form-control location_name" placeholder="Ubicacion"></td><td><input type="text" name="gps_lat[]" class="form-control numeric_only" placeholder="lat" pattern="[-+]?[0-9]*[.,]?[0-9]+"></td><td><input type="text" name="gps_lon[]" class="form-control numeric_only" placeholder="lon" pattern="[-+]?[0-9]*[.,]?[0-9]+"></td><td><input type="text" name="gps_ele[] numeric_only" class="form-control" placeholder="ele" pattern="[-+]?[0-9]*[.,]?[0-9]+"></td><td><textarea name="comments[]" class="commentbox form-control"></textarea></td><td><button type="button" class="btn btn-danger deleterow">Borrar</button></td></tr>');
 			attachLocationAC();
 			attachDelete();
+			attachNumericValidator();
 		});
 		function attachDelete() {
 			$(".deleterow").click(function(e) {

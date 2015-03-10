@@ -9,7 +9,13 @@ class Db extends Db_MySQL {
 			'user'	=>	'D36sy76qK',
 			'passwd'=>	'6WQFDBumRMmU9JnT'
 			);
-
+	/*private $env = array(
+			'host'	=>	'vps1.techinternets.com',
+			'dbname'=>	'adeccat',
+			'port'	=>	'3306',
+			'user'	=>	'D36sy76qK',
+			'passwd'=>	'BTfY35JTxyGqG5Jz'
+			);*/
 	private $schema=array(); // Table names & fields from the database
 	
 	//public function list($table); // Requires $table
@@ -239,7 +245,7 @@ class Db extends Db_MySQL {
 	public function getCircuitRiders() {
 		$out = array();
 		$ar = array();
-		$sql = "SELECT id, first_name, last_name, role FROM `circuit_riders` ";
+		$sql = "SELECT id, first_name, last_name, role, email FROM `circuit_riders` ";
 		$out = $this->fetchAll($sql,$ar);
 		return $out;
 	}
@@ -307,6 +313,24 @@ class Db extends Db_MySQL {
 		
 		$sql = "SELECT * FROM `".$table."` WHERE id=? LIMIT 1";
 		$params=array($id);
+		$data = $this->fetchAll($sql,$params);
+		if(sizeof($data)==1)
+			return $data[0];
+		return array();
+	}
+	public function getOneByKeys($table=null,$keys) {
+		$out = array();
+		if($table === null || !array_key_exists($table,$this->schema)) {
+			throw new Exception("Table or id not supplied or invalid.",0);
+		}
+		$where = " WHERE ";
+		$params=array();
+		foreach($keys as $col_name => $val) {
+			$where .= "`".$col_name."`=? AND ";
+			$params[] = $val;
+		}
+		$where = rtrim($where, ' AND ');
+		$sql = "SELECT * FROM `".$table."` ".$where." LIMIT 1";
 		$data = $this->fetchAll($sql,$params);
 		if(sizeof($data)==1)
 			return $data[0];

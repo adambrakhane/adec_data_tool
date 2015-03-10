@@ -3,6 +3,7 @@ class Template {
 	function ScreenSmallHead() {
 		$out = '';
 		$out .= '<!DOCTYPE html><html><head>';
+		$out .= '<meta charset="utf-8">';
 		$out .= '<link rel="stylesheet" type="text/css" href="./lib/style.css">';
 		$out .= '<link rel="stylesheet" href="lib/bootstrap.min.css">';
 		//$out .= '<link rel="stylesheet" href="lib/bootstrap-theme.min.css">';
@@ -27,7 +28,7 @@ $out = <<<'EOD'
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset='utf-8'/>
+<meta charset="utf-8">
 <link rel="stylesheet" href="./lib/style.css" />
 <link rel="stylesheet" href="./lib/colorbox.css" />
 <link rel="stylesheet" href="./lib/bootstrap.min.css">

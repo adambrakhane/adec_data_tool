@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once('./lib/mysql.php');
 require_once('./lib/db.php');
@@ -37,7 +37,8 @@ catch (Exception $e) {
 				
 			</div>
 		</div> -->
-		<div class="col-lg-8">
+		<?php $num_cols = ($is_admin ? 8 : 12); ?>
+		<div class="col-lg-<?=$num_cols;?>">
 			<div class="panel panel-info">
 				<div class="panel-heading">
 					<h3 class="panel-title">Comunidades</h3>
@@ -131,6 +132,7 @@ else {
 				</div>
 			</div>
 		</div>
+		<?php if($is_admin) { ?>
 		<div class="col-lg-4">
 			<div class="panel panel-info">
 				<div class="panel-heading">
@@ -159,6 +161,7 @@ else {
 				
 			</div>
 		</div>
+		<?php } ?>
 	</div>
 </div> <!--//END CONTAINER-->
 <?=$tpl->scriptIncludes();?>

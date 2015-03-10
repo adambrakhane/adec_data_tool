@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if(!isset($_GET['p'])) {
 	echo "This page is not directly accessable.";
@@ -64,6 +64,7 @@ if($_GET['p']=='insert_cr') {
 		
 		<?php
 		echo "<p>Nombre: ".$data['first_name']." ".$data['last_name']."</p>";
+		echo "<p>Correo: ".$data['email']."</p>";
 		echo "<p>ID: ".$newid."</p>";
 		//echo "<p><a href=\"./form.php?p=insert_asset\">Add another</a><br><a href=\"./form.php?p=update_asset&id=".$newid."\">Edit this asset</a></p>";
 		echo "</div>";
@@ -195,14 +196,15 @@ else if($_GET['p']=='update_cr') {
 	try {
 		$circuit_rider_id = intval($_POST['circuit_rider_id']);
 		if(isset($_POST['password_old']) && strlen($_POST['password_old'])>0 && $db->verifyUserPassword($circuit_rider_id,$_POST['password_old'])) {
-			$data['password'] = hash('md5',$_POST['password_new']);
+			if(strlen($_POST['password_new'])>0) 
+				$data['password'] = hash('md5',$_POST['password_new']);
 			removeInvalidFields($data,'circuit_riders');
 			
 			$status = $db->updateOneById($data,$circuit_rider_id,"circuit_riders");
 			if($response_type=="screen") {
 				?>
 				<div class="alert alert-success">
-				<button type="button" class="btn btn-default close_btn btn-lg" style="float:right;margin-top:20px">Volver</button>
+				<button type="button" class="btn btn-default close_btn_home btn-lg" style="float:right;margin-top:20px">Volver</button>
 				<h2>Éxito!</h2>
 				<?php
 				echo "</div>";
@@ -228,7 +230,8 @@ else if($_GET['p']=='update_cr') {
 		echo $tpl->scriptIncludes();
 		?>
 		<script>
-			$(".close_btn").click(function() {window.location.href = "./";});
+			$(".close_btn").click(function() {window.location.href = "./form.php?p=profile";});
+			$(".close_btn_home").click(function() {window.location.href = "./";});
 		</script>
 		<?php
 		echo $tpl->ScreenSmallFoot();
@@ -664,6 +667,11 @@ else if($_GET['p']=='json_circuit_riders'){
 
 		$out["suggestions"][$i]["value"] = $comm["first_name"]." ".$comm["last_name"];
 		$out["suggestions"][$i]["data"] = $comm["id"];
+		$out["suggestions"][$i]["email"] = $comm["email"];
+		$out["suggestions"][$i]["first_name"] = $comm["first_name"];
+		$out["suggestions"][$i]["last_name"] = $comm["last_name"];
+		$out["suggestions"][$i]["role"] = $comm["role"];
+		$out["suggestions"][$i]["id"] = $comm["id"];
 		$i++;
 	}
 	echo(json_encode($out));

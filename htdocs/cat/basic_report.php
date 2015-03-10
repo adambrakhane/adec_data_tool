@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once('./lib/template.php');
 require_once('./lib/mysql.php');
 require_once('./lib/db.php');
@@ -217,6 +217,10 @@ else if($_GET['p']=='see_date') {
 		$community = $db->getOne("communities",$community_id);
 		//$community_list = $db->getCommunities(null,null,$circuit_rider["id"]);
 
+		// These will reduce db calls when we try to pull up the CR names later
+		$cached_circuit_riders = array();
+		$cached_circuit_riders[$circuit_rider_id] = $circuit_rider;
+		
 		$recordset_list = array();
 
 		$recordset_list[] = $db->dataByDate($community_id,$_GET["recorded_date"]);
@@ -286,7 +290,7 @@ else if($_GET['p']=='see_date') {
 						#basic_report_summary_table tr th:nth-child(2) {}
 						#basic_report_summary_table tr th:nth-child(3) {width:160px;}
 						#basic_report_summary_table tr th:nth-child(4) {width:60px; text-align:center;}
-						#basic_report_summary_table tr th:nth-child(5) {width:30px;}
+						#basic_report_summary_table tr th:nth-child(5) {width:90px;}
 						
 						
 						#basic_report_summary_table tr td:nth-child(4) {text-align:center;}
@@ -300,7 +304,7 @@ else if($_GET['p']=='see_date') {
 		foreach($sections as $section_name => $section_questions) {
 			echo "<h3>".$section_name."</h3>";
 			echo "<table class=\"table table-bordered table-striped table-hover\" id=\"basic_report_summary_table\">";
-			echo "<thead><th>Pregunta</th><th>Respuesta</th><th>Comentario</th><th>(valor)</th><th></th></thead><tbody>";
+			echo "<thead><th>Pregunta</th><th>Respuesta</th><th>Comentario</th><th>(valor)</th><th>Grabada por</th></thead><tbody>";
 			foreach($responses as $v) {
 				$num_of_responses++;
 				echo "<tr>";
@@ -313,6 +317,11 @@ else if($_GET['p']=='see_date') {
 					echo "<td>".$v['comments']."</td>";
 					echo "<td>".$v['response']."</td>";
 					echo "<td>";
+					if(!array_key_exists($v['recorded_by_id'],$cached_circuit_riders)) {
+						$this_cr = $db->getOne("circuit_riders",$v['recorded_by_id']);
+						$cached_circuit_riders[$v['recorded_by_id']] = $this_cr;
+					}
+					echo $cached_circuit_riders[$v['recorded_by_id']]['first_name']." ".$cached_circuit_riders[$v['recorded_by_id']]['last_name'];
 					echo " </td>";
 					//echo "<td>".$last_date." (<button>Ver</button>)</td>";
 
@@ -359,6 +368,11 @@ else if($_GET['p']=='by_circuit_rider') {
 			#community_select_table_length {float:left;margin-top:20px;}
 		</style>
 		<div class="container well">
+			<div class="page-header">
+				<button type="button" class="btn btn-default close_btn" style="float:right;">Cancelar</button>
+				<h1>Editar Junta <small></small></h1>
+				
+			</div>
 			<form name="by_circuit_rider_select" id="by_circuit_rider_select" action="basic_report.php" method="get" role="form">
 				<input type="hidden" name="p" value="by_circuit_rider">
 				<div class="row">
@@ -400,6 +414,7 @@ else if($_GET['p']=='by_circuit_rider') {
 		?>
 		<script>
 		$(function(){
+			$(".close_btn").click(function() {window.location.href = "./";});
 			$('input.datebox').appendDtpicker({
 				"locale": "es",
 				"dateFormat": "YYYY-MM-DD"
